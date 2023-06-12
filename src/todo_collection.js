@@ -168,7 +168,7 @@ class ToDoCollection {
   }
 
   delTask() {
-    const falseTask = this.todoData.filter(item => item.completed === false);
+    const falseTask = this.todoData.filter((item) => item.completed === false);
     for (let i = 0; i < falseTask.length; i += 1) falseTask[i].index = i;
     localStorage.setItem('todoData', JSON.stringify(falseTask));
     this.todoData = falseTask;
