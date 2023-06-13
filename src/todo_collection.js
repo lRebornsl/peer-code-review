@@ -36,6 +36,24 @@ class ToDoCollection {
           localStorage.setItem('todoData', JSON.stringify(this.todoData));
         }
         if (data.index === i) {
+          const dots = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#cccccc" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+            </svg>
+          `;
+          const trash = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#cccccc" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M4 7l16 0" />
+              <path d="M10 11l0 6" />
+              <path d="M14 11l0 6" />
+              <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+              <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+            </svg>
+          `;
           const task = document.createElement('div');
           const line = document.createElement('hr');
           const checkLi = document.createElement('div');
@@ -61,14 +79,7 @@ class ToDoCollection {
           checkLi.appendChild(item);
           task.appendChild(checkLi);
           svg.classList.add('svg');
-          svg.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#cccccc" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-            </svg>
-          `;
+          svg.innerHTML = dots;
           task.appendChild(svg);
           this.todoList.appendChild(line);
           this.todoList.appendChild(task);
@@ -116,32 +127,14 @@ class ToDoCollection {
 
               svgTrash.addEventListener('click', () => {
                 this.todoData.splice(i, 1);
-                for (let j = i; j < this.todoData.length; j += 1) this.todoData[j].index = j;
-                localStorage.setItem('todoData', JSON.stringify(this.todoData));
-                this.render();
+                this.iterateIndex(this.todoData);
               });
 
               svgList.forEach((item) => {
                 if (item.classList.contains('trash')) {
-                  item.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#cccccc" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                      <path d="M4 7l16 0" />
-                      <path d="M10 11l0 6" />
-                      <path d="M14 11l0 6" />
-                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                    </svg>
-                  `;
+                  item.innerHTML = trash;
                 } else {
-                  item.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#cccccc" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                      <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                      <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                      <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                    </svg>
-                  `;
+                  item.innerHTML = dots;
                 }
               });
             }
@@ -169,9 +162,13 @@ class ToDoCollection {
 
   delTask() {
     const falseTask = this.todoData.filter((item) => item.completed === false);
-    for (let i = 0; i < falseTask.length; i += 1) falseTask[i].index = i;
-    localStorage.setItem('todoData', JSON.stringify(falseTask));
     this.todoData = falseTask;
+    this.iterateIndex(falseTask);
+  }
+
+  iterateIndex(array) {
+    for (let i = 0; i < array.length; i += 1) array[i].index = i;
+    localStorage.setItem('todoData', JSON.stringify(array));
     this.render();
   }
 
